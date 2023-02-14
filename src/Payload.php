@@ -14,6 +14,7 @@ namespace Pushok;
 use Countable;
 use Pushok\Payload\Alert;
 use Pushok\Payload\Sound;
+use Pushok\Payload\ContentState;
 
 // Polyfill for PHP 7.2
 if (!function_exists('is_countable')) {
@@ -34,6 +35,7 @@ class Payload implements \JsonSerializable
 {
     const PAYLOAD_ROOT_KEY = 'aps';
     const PAYLOAD_ALERT_KEY = 'alert';
+    const PAYLOAD_CONTENTSTATE_KEY = 'content-state';
     const PAYLOAD_BADGE_KEY = 'badge';
     const PAYLOAD_SOUND_KEY = 'sound';
     const PAYLOAD_INTERRUPTION_LEVEL_KEY = 'interruption-level';
@@ -140,6 +142,32 @@ class Payload implements \JsonSerializable
         return new self();
     }
 
+    /**
+     * Get Content-State.
+     *
+     * @return Content-State|string|array|null
+     */
+    public function getContentState()
+    {
+        return $this->contentState;
+    }
+
+    /**
+     * Set Content-State.
+     *
+     * @param Content-State|string $alert|array $alert
+     *
+     * @return Payload
+     */
+    public function setContentState($contentState): Payload
+    {
+        if ($contentState instanceof ContentState || is_string($contentState) || is_array($contentState)) {
+            $this->contentState = $contentState;
+        }
+
+        return $this;
+    }
+    
     /**
      * Get Alert.
      *
@@ -462,6 +490,9 @@ class Payload implements \JsonSerializable
     {
         $payload = self::getDefaultPayloadStructure();
 
+        if ($this->contentState instanceof ContentState) {
+            $payload[self::PAYLOAD_ROOT_KEY]->{self::PAYLOAD_CONTENTSTATE_KEY} = $this->contentState;
+        }
         if ($this->alert instanceof Alert) {
             $payload[self::PAYLOAD_ROOT_KEY]->{self::PAYLOAD_ALERT_KEY} = $this->alert;
         } elseif (is_string($this->alert)) {
