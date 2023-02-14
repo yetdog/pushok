@@ -105,6 +105,9 @@ class Certificate implements AuthProviderInterface
 
             case 'fileprovider':
                 return $this->appBundleId . '.pushkit.fileprovider';
+                
+            case 'liveactivity':
+                return $this->appBundleId . '.push-type.liveactivity';
 
             default:
                 return $this->appBundleId;
